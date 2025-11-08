@@ -1,0 +1,5 @@
+beautifulsoup4
+cloudscraper
+lxml
+pandas
+python-dotenv
