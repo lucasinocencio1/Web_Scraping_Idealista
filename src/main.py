@@ -19,7 +19,7 @@ HEADERS = {
 }
 
 scraper = cloudscraper.create_scraper(browser={"browser": "chrome", "platform": "darwin", "mobile": False})
-
+# logic used to scrape the all the data from idealista for apartments for rent in lisboa
 SCENARIOS = [
     {
         "name": "menores_precos",
@@ -44,7 +44,7 @@ SCENARIOS = [
     },
 ]
 
-#   FUNÇÕES DE REDE
+#   functions used to fetch the page from idealista
 
 def fetch_page(url, retries=3, timeout=20):
     for attempt in range(retries):
@@ -59,7 +59,7 @@ def fetch_page(url, retries=3, timeout=20):
             time.sleep(3)
 
 
-#   PARSING DO HTML
+#   parsing the html to get the content
 
 def parse_html(html, tag="article", div_class="item"):
     soup = BeautifulSoup(html, "html.parser")
@@ -71,22 +71,22 @@ def extract_content(divs):
     content_list = []
     for div in divs:
         try:
-            # Título e link
+            # title and link
             title_tag = div.find("a", class_="item-link")
             title = title_tag.get_text(strip=True) if title_tag else "N/A"
             link = title_tag["href"] if title_tag and title_tag.has_attr("href") else ""
             if link and not link.startswith("http"):
                 link = f"https://www.idealista.pt{link}"
 
-            # Preço
+            # price
             price_tag = div.find("span", class_="item-price")
             price = price_tag.get_text(strip=True).replace("€", "").strip() if price_tag else "N/A"
 
-            # Detalhes (tamanho, quartos, etc.)
+            # details (size, rooms, etc.)
             details = [d.get_text(strip=True) for d in div.find_all("span", class_="item-detail")]
             details_text = ", ".join(details) if details else "N/A"
 
-            # Localização
+            # location
             location_tag = div.find("span", class_="item-link")
             location = location_tag.get_text(strip=True) if location_tag else "Lisboa"
 
@@ -104,7 +104,7 @@ def extract_content(divs):
     return content_list
 
 
-#   CSV E DELAY
+#   csv and delay
 
 def list_to_csv(data, csv_filename):
     if not data:
@@ -129,7 +129,7 @@ def random_sleep():
     time.sleep(delay)
 
 
-#   PRINCIPAL
+#   main function
 
 def build_url_for_page(config: dict, page: int) -> str:
     if page <= 1:
