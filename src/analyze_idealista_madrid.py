@@ -50,9 +50,16 @@ def extract_tipo(row: pd.Series) -> Optional[str]:
         first_token = title.strip().split()[0]
         sanitized_token = re.sub(r"[^\wáéíóúüñÁÉÍÓÚÜÑ]", "", first_token)
         normalized_token = sanitized_token.lower()
-        special_types = {"estudio", "estúdio", "atico", "ático"}
+        special_types = {
+            "estudio": "Estudio",
+            "estúdio": "Estúdio",
+            "atico": "Ático",
+            "ático": "Ático",
+            "duplex": "Duplex",
+            "dúplex": "Duplex",
+        }
         if normalized_token in special_types:
-            return first_token
+            return special_types[normalized_token]
 
     if not isinstance(details, str) or not details.strip():
         return None
